@@ -31,6 +31,11 @@ class _HomePageState extends State<HomePage> {
         "TimeStamp": Timestamp.now()
       });
     }
+
+    // clear the textfield
+    setState(() {
+      textController.clear();
+    });
   }
 
   // sign user out
@@ -64,15 +69,15 @@ class _HomePageState extends State<HomePage> {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                      // get message
-                      final post = snapshot.data!.docs[index];
-                      return WallPost(
-                        message: post["Message"],
-                        user: post["UserEmail"],
-                      );
-                    });
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          // get message
+                          final post = snapshot.data!.docs[index];
+                          return WallPost(
+                            message: post["Message"],
+                            user: post["UserEmail"],
+                          );
+                        });
                   } else if (snapshot.hasError) {
                     return Center(
                       child: Text('Error:${snapshot.error}'),
@@ -107,7 +112,14 @@ class _HomePageState extends State<HomePage> {
             ),
 
             // logged in as "user name"
-            Text("Logged in as: " + currentUser.email!)
+            Text(
+              "Logged in as: " + currentUser.email!,
+              style: TextStyle(color: Colors.grey),
+            ),
+
+            const SizedBox(
+              height: 50,
+            )
           ],
         ),
       ),

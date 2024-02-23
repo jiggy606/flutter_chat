@@ -12,15 +12,42 @@ class WallPost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Column(
-          children: [
-            Text(user),
-            Text(message)
-          ],
-        )
-      ],
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      margin: EdgeInsets.only(top: 25, left: 25, right: 25),
+      padding: EdgeInsets.all(25),
+      child: Row(
+        children: [
+          // profile pic
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.grey[400],
+            ),
+            padding: EdgeInsets.all(10),
+            child: const Icon(
+              Icons.person,
+              color: Colors.red,
+            ),
+          ),
+          const SizedBox(width: 20,),
+          // message and email
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                user,
+                style: TextStyle(color: Colors.grey[500]),
+              ),
+              const SizedBox(height: 10,),
+              Text(message),
+            ],
+          )
+        ],
+      ),
     );
   }
 }
