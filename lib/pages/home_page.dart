@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:chat_app/components/drawer.dart';
 import 'package:chat_app/components/text_field.dart';
 import 'package:chat_app/components/wall_post.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -54,6 +55,7 @@ class _HomePageState extends State<HomePage> {
         // sign out button
         actions: [IconButton(onPressed: signOut, icon: Icon(Icons.logout))],
       ),
+      // drawer: MyDrawer(),
       body: Center(
         child: Column(
           children: [
@@ -126,6 +128,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+      drawer: MyDrawer()
     );
   }
-}
+} 

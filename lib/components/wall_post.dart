@@ -73,7 +73,10 @@ class _WallPostState extends State<WallPost> {
               const SizedBox(height: 5,),
 
               // like counter
-              Text(widget.likes.length.toString()),
+              Text(
+                widget.likes.length.toString(),
+                style: TextStyle(color: Colors.lightBlue),
+              ),
             ],
           ),
           const SizedBox(
