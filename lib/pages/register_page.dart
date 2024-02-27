@@ -1,5 +1,6 @@
 import 'package:chat_app/components/button.dart';
 import 'package:chat_app/components/text_field.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -38,10 +39,20 @@ class _RegisterPageState extends State<RegisterPage> {
 
     // creating the user
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailTextController.text,
-        password: passwordTextController.text
-      );
+      // user create
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: emailTextController.text,
+              password: passwordTextController.text);
+
+      // create in cloud for user
+      FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userCredential.user!.email)
+          .set({
+        'username' : emailTextController.text.split('@')[0], // initial split
+        'bio' : 'Empty bio...' // initial empty bio
+      });
 
       // remove loading circle
       if (context.mounted) Navigator.pop(context);
