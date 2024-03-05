@@ -1,4 +1,7 @@
+import 'package:chat_app/components/comment.dart';
+import 'package:chat_app/components/comment_button.dart';
 import 'package:chat_app/components/like_button.dart';
+import 'package:chat_app/helper/helper_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +77,7 @@ class _WallPostState extends State<WallPost> {
   // add dialog box for showing comment
   void showCommentDialog() {
     showDialog(
-      context: context, 
+      context: context,
       builder: (context) => AlertDialog(
         title: Text("Add Comment"),
         content: TextField(
@@ -84,16 +87,29 @@ class _WallPostState extends State<WallPost> {
         actions: [
           // post button
           TextButton(
-           onPressed: () => addComment(_commentTextController.text), 
-           child: Text('Post')
-          ),
+              onPressed: () {
+                // add  comment
+                addComment(_commentTextController.text);
+
+                //clear controller
+                _commentTextController.clear();
+
+                // pop box
+                Navigator.pop(context);
+              },
+              child: Text('Post')),
 
           // calcel button
           TextButton(
-           onPressed: () => Navigator.pop(context), 
-           child: Text('Cancel')
-          ),
-        ],  
+              onPressed: () {
+                // pop box
+                Navigator.pop(context);
+
+                //clear controller
+                _commentTextController.clear();
+              },
+              child: Text('Cancel')),
+        ],
       ),
     );
   }
@@ -102,7 +118,7 @@ class _WallPostState extends State<WallPost> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.grey[200],
         borderRadius: BorderRadius.circular(8.0),
       ),
       margin: EdgeInsets.only(top: 25, left: 25, right: 25),
@@ -114,30 +130,38 @@ class _WallPostState extends State<WallPost> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // message
+              Text(widget.message),
+
+              const SizedBox(
+                height: 5,
+              ),
+              // user
               Text(
                 widget.user,
                 style: TextStyle(color: Colors.grey[500]),
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(widget.message),
             ],
+          ),
+
+          const SizedBox(
+            height: 20,
           ),
 
           // buttons
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // LIKE
               Column(
                 children: [
                   // like button
                   LikeButton(isLiked: isLiked, onTap: toggleLike),
-              
+
                   const SizedBox(
                     height: 5,
                   ),
-              
+
                   // like counter
                   Text(
                     widget.likes.length.toString(),
@@ -146,25 +170,65 @@ class _WallPostState extends State<WallPost> {
                 ],
               ),
 
+              const SizedBox(
+                width: 15,
+              ),
+
               // COMMENT
               Column(
                 children: [
-                  // like button
-                  LikeButton(isLiked: isLiked, onTap: toggleLike),
-              
+                  // comment button
+                  CommentButton(onTap: showCommentDialog),
+
                   const SizedBox(
                     height: 5,
                   ),
-              
-                  // like counter
+
+                  // comment counter
                   Text(
-                    widget.likes.length.toString(),
+                    '0',
                     style: TextStyle(color: Colors.lightBlue),
                   ),
                 ],
               ),
             ],
           ),
+
+          const SizedBox(height: 20,),
+
+          // comments under the post
+          StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection("User Posts")
+                  .doc(widget.postId)
+                  .collection("Comments")
+                  .orderBy("CommentTime", descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                // show loading circle if no data
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                return ListView(
+                  shrinkWrap: true, // so scrolling won't be funky
+                  physics: NeverScrollableScrollPhysics(),
+                  children: snapshot.data!.docs.map((doc) {
+                    // get comment
+                    final commentData = doc.data() as Map<String, dynamic>;
+
+                    // return comment
+                    return Comment(
+                      text: commentData["CommentText"], 
+                      user: commentData["CommentBy"], 
+                      time: formatDate(commentData["CommentTime"]),
+                      //time: commentData["CommentTime"],
+                    );
+                  }).toList(),
+                );
+              })
         ],
       ),
     );
