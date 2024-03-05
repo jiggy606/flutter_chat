@@ -16,6 +16,9 @@ class _ProfilePageState extends State<ProfilePage> {
   // user
   final currentUser = FirebaseAuth.instance.currentUser!;
 
+  // all users
+  final usersCollection = FirebaseFirestore.instance.collection("Users");
+
   // edit field
   Future<void> editField(String field) async {
     String newValue = "";
@@ -40,23 +43,27 @@ class _ProfilePageState extends State<ProfilePage> {
               actions: [
                 // cancel button
                 TextButton(
-                  onPressed: () => Navigator.pop(context), 
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(color: Colors.white),
-                  )
-                ),
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(color: Colors.white),
+                    )),
 
                 // save button
                 TextButton(
-                  onPressed: () => Navigator.of(context).pop(newValue), 
-                  child: Text(
-                    'Save',
-                    style: TextStyle(color: Colors.white),
-                  )
-                ),
+                    onPressed: () => Navigator.of(context).pop(newValue),
+                    child: Text(
+                      'Save',
+                      style: TextStyle(color: Colors.white),
+                    )),
               ],
             ));
+
+    // update data in firestore
+    if (newValue.trim().length > 0) {
+      // only update if the textfield has data
+      await usersCollection.doc(currentUser.email).update({field: newValue});
+    }
   }
 
   @override
