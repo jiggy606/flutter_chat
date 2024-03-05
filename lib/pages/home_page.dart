@@ -65,8 +65,11 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         backgroundColor: Colors.grey[300],
         appBar: AppBar(
-          title: Text("The wall"),
-          backgroundColor: Colors.grey[800],
+          title: Text(
+            "The wall",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.grey[900],
         ),
         // drawer: MyDrawer(),
         body: Center(

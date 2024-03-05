@@ -45,7 +45,7 @@ class _RegisterPageState extends State<RegisterPage> {
               email: emailTextController.text,
               password: passwordTextController.text);
 
-      // create in cloud for user
+      // create in cloud for user (firebase)
       FirebaseFirestore.instance
           .collection("Users")
           .doc(userCredential.user!.email)
